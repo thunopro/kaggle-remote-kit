@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# kjupyter [--cpu] : mở Jupyter chạy trên GPU Kaggle, in ra URL để dùng từ máy bạn
+# kjupyter stop    : tắt phiên (tiết kiệm quota GPU)
+export PATH=$PATH:~/.local/bin
+B=~/kaggle-work/.kjupyter; USER=$(kaggle config view 2>/dev/null | awk -F": " "/username/{print \$2}"); SLUG=kaggle-remote-jupyter
+S=~/kaggle-work/.kjupyter
+off() { [ -f $S/topic ] && curl -s -m 10 -d stop "https://ntfy.sh/$(cat $S/topic)-ctl" >/dev/null
+  [ -f $S/watcher.pid ] && kill $(cat $S/watcher.pid) 2>/dev/null; rm -f $S/watcher.pid $S/last_url
+  echo "🛑 Đã gửi lệnh tắt, Kaggle sẽ dừng trong ≤30 giây."; }
+case "$1" in
+  off|stop) off; exit;;
+  status) [ -f $S/last_url ] && { echo "ON: $(cat $S/last_url)"; kaggle kernels status $USER/$SLUG; } || echo OFF; exit;;
+esac
+[ -f $S/topic ] && off >/dev/null
+GPU=true; [ "$1" = "--cpu" ] && GPU=false
+TOKEN=$(openssl rand -hex 16); TOPIC="kj-$(openssl rand -hex 12)"; echo $TOPIC > $S/topic
+setsid nohup kwatch $TOPIC >/dev/null 2>&1 & echo $! > $S/watcher.pid
+W=$(mktemp -d); cd $W
+sed "s/__TOKEN__/$TOKEN/;s/__TOPIC__/$TOPIC/" $B/server.tmpl.py > train.py
+jupytext --to ipynb --set-kernel python3 train.py -o train.ipynb >/dev/null
+cat > kernel-metadata.json <<J
+{"id":"$USER/$SLUG","title":"$SLUG","code_file":"train.ipynb","language":"python","kernel_type":"notebook",
+ "is_private":true,"enable_gpu":$GPU,"enable_internet":true,"dataset_sources":[],"competition_sources":[],"kernel_sources":[]}
+J
+kaggle kernels push -p . || exit 1
+echo "⏳ Đợi Kaggle khởi động (1-3 phút)..."
+for i in $(seq 90); do
+  U=$(curl -s "https://ntfy.sh/$TOPIC/raw?poll=1" | tail -1)
+  [ -n "$U" ] && break; sleep 5
+done
+[ -z "$U" ] && { off; echo "Không nhận được URL, xem https://www.kaggle.com/code/$USER/$SLUG"; exit 1; }
+echo "$U" > ~/kaggle-work/.kjupyter/last_url
+printf %s "$U" | xclip -selection clipboard 2>/dev/null; printf %s "$U" | xsel -b 2>/dev/null
+echo; echo "✅ Jupyter trên Kaggle: $U"
+echo "   Link đã được copy vào clipboard. VS Code: Select Kernel → Existing Jupyter Server → Ctrl+V → Enter."

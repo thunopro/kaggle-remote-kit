@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Dùng: krun <thư mục-dự-án> [--cpu|--tpu]   (mặc định GPU)
+# Thư mục chứa train.ipynb. Tự tạo metadata, push lên Kaggle, đợi chạy xong, tải output về ./<thư mục>/output
+set -e
+export PATH=$PATH:~/.local/bin
+D="${1:?Dùng: krun <thư-mục> [--cpu]}"; MODE="${2:-gpu}"
+cd "$D"
+[ -f train.ipynb ] || { [ -f train.py ] && jupytext --to ipynb --set-kernel python3 train.py -o train.ipynb; }
+[ -f train.ipynb ] || { echo "Thiếu train.ipynb (hoặc train.py)"; exit 1; }
+USER=$(kaggle config view 2>/dev/null | awk -F': ' '/username/{print $2}')
+
+SLUG=$(basename "$(pwd)" | tr 'A-Z_' 'a-z-')
+[ ${#SLUG} -lt 5 ] && SLUG="$SLUG-nb"
+GPU=true; [ "$MODE" = "--cpu" ] && GPU=false
+cat > kernel-metadata.json <<J
+{"id":"$USER/$SLUG","title":"$SLUG","code_file":"train.ipynb","language":"python","kernel_type":"notebook",
+ "is_private":true,"enable_gpu":$GPU,"enable_internet":true,"dataset_sources":[],"competition_sources":[],"kernel_sources":[]}
+J
+kaggle kernels push -p .
+echo "⏳ Đang chạy trên Kaggle..."
+while :; do
+  S=$(kaggle kernels status "$USER/$SLUG" 2>&1 | tr -d '"'); echo "$S"
+  case "$S" in *COMPLETE*) break;; *ERROR*|*CANCEL*) break;; esac; sleep 20
+done
+kaggle kernels output "$USER/$SLUG" -p output
+echo "✅ Output ở: $(pwd)/output"

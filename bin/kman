@@ -11,6 +11,7 @@ cat <<'M'
  File giữa máy bạn <-> Kaggle (cần kaggle on)
   kaggle up [-d thư_mục_đích] <file|dir>...  Upload (nhiều file/thư mục → nén zip, 1 lần, giải nén bên Kaggle)
   kaggle rm <đường_dẫn|glob>...  Xoá file/thư mục trên Kaggle (vd: kaggle rm '*.jpg' test)
+  kaggle terminal              Mở terminal ngay trên Kaggle (ls, cd, unzip, nvidia-smi, pip... thoát: exit)
   kaggle ls [thư_mục]          Xem file trên Kaggle
   kaggle down <file|dir> [đích=.]  Tải từ Kaggle về máy
 

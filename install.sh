@@ -4,7 +4,7 @@ set -e
 HERE="$(cd "$(dirname "$0")" && pwd)"
 pip install --user --break-system-packages -U kaggle jupytext jupyterlab websocket-client >/dev/null 2>&1 || pip install --user -U kaggle jupytext jupyterlab websocket-client
 mkdir -p ~/.local/bin ~/kaggle-work/.kjupyter ~/.kaggle
-cp "$HERE"/bin/* ~/.local/bin/ && chmod +x ~/.local/bin/{krun,kjupyter,kwatch,kup,kdown,kls,ktime,kman}
+cp "$HERE"/bin/* ~/.local/bin/ && chmod +x ~/.local/bin/{krun,kjupyter,kwatch,kup,kdown,kls,ktime,kman,kterm}
 cp "$HERE"/templates/server.tmpl.py ~/kaggle-work/.kjupyter/
 T="${1:-}"
 if [ -z "$T" ] && [ ! -f ~/.kaggle/access_token ]; then read -rsp "Dán Kaggle API token (KGAT_...): " T; echo; fi

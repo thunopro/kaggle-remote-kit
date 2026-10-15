@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-export PATH=$PATH:~/.local/bin
-echo "== Quota Kaggle (reset hàng tuần) =="; kaggle quota
-S=~/kaggle-work/.kjupyter
-if [ -f $S/last_url ]; then echo; echo "== Phiên đang chạy =="; echo "Bật từ: $(date -r $S/last_url '+%H:%M %d/%m') (~$(( ($(date +%s)-$(stat -c %Y $S/last_url))/60 )) phút)"
-else echo; echo "Không có phiên nào đang bật."; fi

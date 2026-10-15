@@ -1,9 +1,8 @@
 .kaggle/
+.kaggle-remote/
 access_token
 kaggle.json
-*.env
 .env
-last_url
-topic
 *.zip
 output/
+__pycache__/

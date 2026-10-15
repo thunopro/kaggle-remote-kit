@@ -1,9 +1,0 @@
-#!/usr/bin/env python3
-"""kls [thư mục] : liệt kê file trong /kaggle/working trên Kaggle."""
-import sys, os, json, urllib.request
-u = open(os.path.expanduser("~/kaggle-work/.kjupyter/last_url")).read().strip()
-base, tok = u.split("/?token=")
-p = sys.argv[1] if len(sys.argv) > 1 else ""
-r = urllib.request.Request(f"{base}/api/contents/{p}", headers={"Authorization": f"token {tok}"})
-for c in json.load(urllib.request.urlopen(r, timeout=60))["content"]:
-    print(f"{(c['size'] or 0)/1e6:9.2f} MB  {c['name']}{'/' if c['type']=='directory' else ''}")

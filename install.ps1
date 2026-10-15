@@ -18,3 +18,4 @@ if ($Token) { [IO.File]::WriteAllText($tokFile, $Token) }
 $p = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($p -notlike "*$wrap*") { [Environment]::SetEnvironmentVariable("Path", "$wrap;$p", "User") }
 Write-Host "Xong. Mở cửa sổ PowerShell/CMD MỚI rồi gõ: kaggle man"
+Write-Host "💡 Tuỳ chọn: Gõ 'kaggle gdrive <link_folder>' để liên kết Google Drive lưu trữ vĩnh viễn (xem README.md)."

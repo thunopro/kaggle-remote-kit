@@ -15,3 +15,4 @@ for rc in ~/.bashrc ~/.zshrc; do [ -f "$rc" ] && ! grep -q kaggle-wrap "$rc" && 
 # dọn bản cũ (bash scripts v1.x)
 for f in krun kjupyter kwatch kup kdown kls ktime kman kterm; do rm -f ~/.local/bin/$f; done
 echo "✅ Xong. Mở terminal mới rồi gõ: kaggle man"
+echo "💡 Tuỳ chọn: Gõ 'kaggle gdrive <link_folder>' để liên kết Google Drive lưu trữ vĩnh viễn (xem README.md)."

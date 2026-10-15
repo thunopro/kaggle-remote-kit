@@ -1,8 +1,20 @@
+# Bảo mật thông tin & API keys (Tuyệt đối không commit)
 .kaggle/
 .kaggle-remote/
 access_token
 kaggle.json
+rclone.conf
+*.conf
+gdrive_id
+*.token
+*.key
+*.pem
 .env
-*.zip
+.env.*
+
+# Output & cache
 output/
 __pycache__/
+*.pyc
+*.zip
+*.tar.gz

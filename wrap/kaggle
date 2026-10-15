@@ -6,6 +6,6 @@ case "$1" in
   off|status) exec kjupyter "$1";;
   url) u=$(cat ~/kaggle-work/.kjupyter/last_url 2>/dev/null); echo "${u:-OFF}"; printf %s "$u" | xclip -selection clipboard 2>/dev/null;;
   time) exec ktime;; up) shift; exec kup "$@";; ls) shift; exec kls "$@";; down) shift; exec kdown "$@";;
-  run) shift; exec krun "$@";; man) exec kman;;
+  rm) shift; exec kup --rm "$@";; run) shift; exec krun "$@";; man) exec kman;;
   *) exec ~/.local/bin/kaggle "$@";;
 esac

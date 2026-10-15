@@ -27,7 +27,8 @@ Yêu cầu: Linux, Python 3, `curl`, `openssl`, tài khoản Kaggle đã xác mi
 | `kaggle status` | Đang ON/OFF |
 | `kaggle url` | In lại link |
 | `kaggle time` | Quota GPU/TPU còn lại + thời gian phiên |
-| `kaggle up <file\|dir>` | Upload lên `/kaggle/working` (thư mục: nén zip → upload 1 lần → giải nén bên Kaggle, giữ cấu trúc) |
+| `kaggle up [-d dir] <file\|dir>...` | Upload lên `/kaggle/working` (thư mục: nén zip → upload 1 lần → giải nén bên Kaggle, giữ cấu trúc) |
+| `kaggle rm <path\|glob>` | Xoá file/thư mục trên Kaggle |
 | `kaggle ls [dir]` | Liệt kê file trên Kaggle |
 | `kaggle down <file\|dir> [đích]` | Tải từ Kaggle về |
 | `kaggle run <thư mục> [--cpu]` | Chạy cả `train.ipynb`/`train.py` một lần, tải output về `<thư mục>/output` |

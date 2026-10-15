@@ -33,18 +33,28 @@ def remote_exec(code):
         if t == "status" and m["content"]["execution_state"] == "idle": break
     ws.close(); req(f"/api/kernels/{kid}", "DELETE")
     if err: sys.exit("Lỗi bên Kaggle:\n" + err)
-for p in sys.argv[1:]:
-    p = p.rstrip("/")
-    if os.path.isdir(p):
-        name = os.path.basename(os.path.abspath(p))
-        z = os.path.join(tempfile.mkdtemp(), name + ".zip"); cnt = 0
-        with zipfile.ZipFile(z, "w", zipfile.ZIP_STORED) as zf:
+args = sys.argv[1:]
+if not args: sys.exit("Dùng: kaggle up [-d thư_mục_đích] <file|dir>...   |   kaggle rm <đường dẫn|glob>...")
+if args[0] == "--rm":
+    pats = args[1:]
+    if any(x.startswith("/") or ".." in x for x in pats): sys.exit("Chỉ xoá trong /kaggle/working, dùng đường dẫn tương đối")
+    remote_exec("import glob,os,shutil\nn=0\nfor pat in %r:\n    for f in glob.glob(os.path.join('/kaggle/working',pat)):\n        shutil.rmtree(f) if os.path.isdir(f) else os.remove(f); n+=1\nprint(n)" % pats)
+    print("✓ đã xoá:", " ".join(pats)); sys.exit()
+rd = ""
+if args[0] == "-d": rd = args[1].strip("/"); args = args[2:]
+paths = [x.rstrip("/") for x in args]
+if len(paths) == 1 and not rd and os.path.isfile(paths[0]):
+    upload(paths[0], os.path.basename(paths[0])); print(f"  ✓ /kaggle/working/{os.path.basename(paths[0])}"); sys.exit()
+name = "kup_bundle"; z = os.path.join(tempfile.mkdtemp(), name + ".zip"); cnt = 0
+with zipfile.ZipFile(z, "w", zipfile.ZIP_STORED) as zf:
+    for p in paths:
+        if os.path.isdir(p):
+            top = os.path.basename(os.path.abspath(p))
             for root, _, fs in os.walk(p):
                 for fn in fs:
-                    fp = os.path.join(root, fn); zf.write(fp, os.path.join(name, os.path.relpath(fp, p))); cnt += 1
-        print(f"{name}/: {cnt} file → zip {os.path.getsize(z)/1e6:.1f} MB")
-        upload(z, name + ".zip")
-        remote_exec(f"import zipfile,os\nzipfile.ZipFile('/kaggle/working/{name}.zip').extractall('/kaggle/working')\nos.remove('/kaggle/working/{name}.zip')")
-        os.remove(z); print(f"  ✓ /kaggle/working/{name}/")
-    else:
-        upload(p, os.path.basename(p)); print(f"  ✓ /kaggle/working/{os.path.basename(p)}")
+                    fp = os.path.join(root, fn); zf.write(fp, os.path.join(rd, top, os.path.relpath(fp, p))); cnt += 1
+        else: zf.write(p, os.path.join(rd, os.path.basename(p))); cnt += 1
+print(f"{cnt} file → zip {os.path.getsize(z)/1e6:.1f} MB → /kaggle/working/{rd}")
+upload(z, name + ".zip")
+remote_exec(f"import zipfile,os\nzipfile.ZipFile('/kaggle/working/{name}.zip').extractall('/kaggle/working')\nos.remove('/kaggle/working/{name}.zip')")
+os.remove(z); print("  ✓ xong")

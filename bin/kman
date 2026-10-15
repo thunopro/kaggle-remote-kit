@@ -9,7 +9,8 @@ cat <<'M'
   kaggle time         Quota GPU/TPU còn lại + thời gian phiên đã chạy
 
  File giữa máy bạn <-> Kaggle (cần kaggle on)
-  kaggle up <file|dir>...      Upload lên /kaggle/working
+  kaggle up [-d thư_mục_đích] <file|dir>...  Upload (nhiều file/thư mục → nén zip, 1 lần, giải nén bên Kaggle)
+  kaggle rm <đường_dẫn|glob>...  Xoá file/thư mục trên Kaggle (vd: kaggle rm '*.jpg' test)
   kaggle ls [thư_mục]          Xem file trên Kaggle
   kaggle down <file|dir> [đích=.]  Tải từ Kaggle về máy
 

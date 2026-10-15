@@ -42,4 +42,4 @@ Yêu cầu: Linux, Python 3, `curl`, `openssl`, tài khoản Kaggle đã xác mi
 - Quota: GPU 30h/tuần, TPU 20h/tuần, mỗi phiên tối đa ~12h.
 - `/kaggle/working` bị xoá khi tắt phiên → `kaggle down` trước.
 - Link đổi mỗi lần bật → chọn lại kernel trong VS Code. Ai có link là điều khiển được phiên, đừng chia sẻ.
-- Dùng `kaggle on` trong terminal tương tác (là hàm bash). Trong script dùng `kjupyter on/off`.
+- `kaggle` là wrapper script (bash/zsh/fish đều dùng được), lệnh không phải của kit sẽ chuyển cho Kaggle CLI gốc.
